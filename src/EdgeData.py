@@ -6,6 +6,9 @@ class EdgeData:
         self.weight = weight
         self.tag = 0
 
+    def __repr__(self):
+        return f'Edge(src: {self.src}, dest: {self.dest}, weight: {self.weight})'
+
     def set_weight(self, weight: float) -> None:
         self.weight = weight
 
