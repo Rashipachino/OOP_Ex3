@@ -13,6 +13,17 @@ class DiGraph(GraphInterface, ABC):
         self.edges = {}
         self.mc = 0
 
+    def __copy__(self) -> GraphInterface:
+        temp = DiGraph()
+        for n in self.nodes:
+            temp.add_node(n.id, (n.pos.x, n.pos.y, n.pos.z))
+        for e in self.edges:
+            temp.add_edge(e.src, e.dest, e.weight)
+        return temp
+
+    def __repr__(self) -> str:
+        return f'Graph(Nodes: {self.nodes}, Edges: {self.edges})'
+
     def v_size(self) -> int:
         return len(self.nodes)
 

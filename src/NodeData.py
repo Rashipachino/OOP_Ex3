@@ -4,9 +4,12 @@ from src.Point3D import Point3D
 
 class NodeData:
 
-    def __init__(self, node_id: int, pos: tuple) -> None:
+    def __init__(self, node_id: int, pos: tuple = None) -> None:
         self.id = node_id
-        self.pos = Point3D(pos)
+        if pos is not None:
+            self.pos = Point3D(pos)
+        else:
+            self.pos = None
         self.weight = 0
         self.tag = 0
         self.inEdges = {}
@@ -15,6 +18,11 @@ class NodeData:
 
     def __copy__(self):
         return NodeData(self.id, (self.pos.x, self.pos.y, self.pos.z))
+
+    def __repr__(self):
+        if self.pos is not None:
+            return f'Node(id: {self.id}, pos: {self.pos.x},{self.pos.y},{self.pos.z})'
+        return f'Node(id: {self.id})'
 
     def set_pos(self, pos: tuple) -> None:
         self.pos = Point3D(pos)
@@ -34,8 +42,8 @@ class NodeData:
     def add_out_edge(self, e: EdgeData) -> None:
         self.outEdges[e.dest] = e.weight
 
-    def remove_in_edge(self, dest: int) -> EdgeData:
-        return self.inEdges.pop(dest)
-
-    def remove_out_edge(self, src: int) -> EdgeData:
+    def remove_in_edge(self, src: int) -> EdgeData:
         return self.inEdges.pop(src)
+
+    def remove_out_edge(self, dest: int) -> EdgeData:
+        return self.outEdges.pop(dest)
