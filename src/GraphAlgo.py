@@ -47,7 +47,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         global node_weight
         if id1 not in self.graph.nodes or id2 not in self.graph.nodes:
-            return -1, []
+            return float('inf'), []
         if id1 == id2:
             return 0.0, [id1]
         dijakstra = {i: float('inf') for i in self.graph.nodes}
@@ -63,7 +63,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         while not pq.empty():
             node_weight, i = pq.get()
             if dijakstra[i] == float('inf'):
-                return -1, []
+                return float('inf'), []
             if i == id2:
                 break
             for dest, w in self.graph.all_out_edges_of_node(i).items():
@@ -71,16 +71,73 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     dijakstra[dest] = dijakstra[i] + w
                     prev[dest] = i
                     pq.put((dijakstra[dest], dest))
-        path = []
         temp = id2
-        path.append(temp)
+        short_path = [temp]
         while prev[temp] is not None:
-            path.insert(0, prev[temp])
+            short_path.insert(0, prev[temp])
             temp = prev[temp]
-        return node_weight, path
+        return node_weight, short_path
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
-        pass
+        if len(node_lst) == 1:
+            return node_lst[0], 0.0
+        global path, cost
+        min_weight = float('inf')
+        min_path = []
+        for city in node_lst:
+            path = [city]
+            cities = node_lst.copy()
+            cost = 0.0
+            curr = city
+            while True:
+                cities.remove(curr)
+                if len(cities) == 1:
+                    break
+                closest_node_path = self._closestNodeFinder(cities, curr)
+                if closest_node_path == -1:
+                    return [], -1
+                path += closest_node_path[0][1:]
+                cost += closest_node_path[1]
+                curr = closest_node_path[0][-1]
+            closest_last = self.shortest_path(curr, cities[0])
+            path += closest_last[1][1:]
+            cost += closest_last[0]
+            if cost < min_weight:
+                min_path = path.copy()
+                min_weight = cost
+        return min_path, min_weight
+
+    def _closestNodeFinder(self, n_list: List[int], curr_node: int) -> (List[int], float):
+        global curr, node_w
+        path_w = 0.0
+        dijkstra = {i: float('inf') for i in self.graph.nodes}
+        dijkstra[curr_node] = 0
+        pq = PriorityQueue()
+        prev = {}
+        for n in self.graph.nodes:
+            prev[n] = None
+            if n != curr_node:
+                pq.put((float('inf'), n))
+            else:
+                pq.put((0, n))
+        while not pq.empty():
+            node_w, curr = pq.get()
+            if curr in n_list:
+                break
+            for neighbor, w in self.graph.all_out_edges_of_node(curr).items():
+                if dijkstra[neighbor] > dijkstra[curr] + w:
+                    dijkstra[neighbor] = dijkstra[curr] + w
+                    prev[neighbor] = curr
+                    pq.put((dijkstra[neighbor], neighbor))
+        if pq.empty():
+            return -1
+        temp_node = curr
+        path_w += node_w
+        dij_path = [temp_node]
+        while prev[temp_node] is not None:
+            dij_path.insert(0, prev[temp_node])
+            temp_node = prev[temp_node]
+        return dij_path, node_w
 
     def centerPoint(self) -> (int, float):
         pass
