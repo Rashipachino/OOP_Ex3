@@ -181,7 +181,7 @@ def game(ga: GraphAlgo):
                                 text_box = 'INVALID INPUT!'
                         if button_selected == 5:
                             info = user_text.split(',')
-                            if ga.graph.add_edge(int(info[0]), int(info[1]), int(info[2])):
+                            if ga.graph.add_edge(int(info[0]), int(info[1]), float(info[2])):
                                 text_box = "EDGE ADDED"
                             else:
                                 text_box = 'INVALID INPUT!'
