@@ -166,6 +166,7 @@ def game(ga: GraphAlgo):
                         if button_selected == 1:
                             if ga.load_from_json(user_text):
                                 text_box = 'LOADED'
+                                center_node = -1
                             else:
                                 text_box = 'FAILED TO LOAD'
                         if button_selected == 2:
