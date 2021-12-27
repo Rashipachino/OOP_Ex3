@@ -63,7 +63,11 @@ def check0():
     print(g_algo.TSP([2, 3, 1]))
     print(g_algo.centerPoint())
 
-    g_algo.plot_graph()
+    # g_algo.plot_graph()
+
+    g = GraphAlgo()
+    g.load_from_json("data/A0.json")
+    g.plot_graph()
 
 
 def check1():
