@@ -72,8 +72,8 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             return float('inf'), []
         if id1 == id2:  # if both ids entered are the same, the path is just the node itself and the cost is zero
             return 0.0, [id1]
-        dijakstra = {i: float('inf') for i in self.graph.nodes}  # turning all "weights" to infinity
-        dijakstra[id1] = 0  # turns start node's "weight" to 0
+        dijkstra = {i: float('inf') for i in self.graph.nodes}  # turning all "weights" to infinity
+        dijkstra[id1] = 0  # turns start node's "weight" to 0
         pq = []
         prev = {}
         for n in self.graph.nodes:  # assign all nodes prev = None
@@ -84,16 +84,16 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                 heapq.heappush(pq, (0, n))
         while len(pq) != 0:
             node_weight, i = heapq.heappop(pq)
-            if dijakstra[i] == float('inf'):  # if popping a node who's weight is infinity, no path exists
+            if dijkstra[i] == float('inf'):  # if popping a node who's weight is infinity, no path exists
                 return float('inf'), []
             if i == id2:  # found path
                 break
             for dest, w in self.graph.all_out_edges_of_node(i).items():  # all neighbors of i
-                if dijakstra[dest] > dijakstra[i] + w:
-                    pq.remove((dijakstra[dest], dest))  # removes id from pq
-                    dijakstra[dest] = dijakstra[i] + w  # relaxes
+                if dijkstra[dest] > dijkstra[i] + w:
+                    pq.remove((dijkstra[dest], dest))  # removes id from pq
+                    dijkstra[dest] = dijkstra[i] + w  # relaxes
                     prev[dest] = i  # updates prev
-                    heapq.heappush(pq, (dijakstra[dest], dest)) # push id back into pq with new weight
+                    heapq.heappush(pq, (dijkstra[dest], dest)) # push id back into pq with new weight
         temp = id2
         short_path = [temp]
         while prev[temp] is not None:  # create list path
