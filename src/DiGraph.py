@@ -10,6 +10,7 @@ class DiGraph(GraphInterface, ABC):
     def __init__(self) -> None:
         self.nodes = {}
         self.edges = {}
+        self.mc = 0
 
     def __copy__(self) -> GraphInterface:
         temp = DiGraph()
@@ -28,18 +29,23 @@ class DiGraph(GraphInterface, ABC):
     def e_size(self) -> int:
         return len(self.edges)
 
+    def get_mc(self) -> int:
+        return self.mc
+
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
         if id1 in self.nodes and id2 in self.nodes and (id1, id2) not in self.edges:
             e = EdgeData(id1, id2, weight)
             self.edges[(id1, id2)] = e
             self.nodes[id1].add_out_edge(e)
             self.nodes[id2].add_in_edge(e)
+            self.mc += 1
             return True
         return False
 
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         if node_id not in self.nodes:
             self.nodes[node_id] = NodeData(node_id, pos)
+            self.mc += 1
             return True
         return False
 
@@ -52,6 +58,7 @@ class DiGraph(GraphInterface, ABC):
             for e in n.inEdges:
                 self.nodes[e].remove_out_edge(n.id)
                 self.edges.pop((e, n.id))
+            self.mc += 1
             return True
         return False
 
@@ -60,6 +67,7 @@ class DiGraph(GraphInterface, ABC):
             self.nodes[node_id1].remove_out_edge(node_id2)
             self.nodes[node_id2].remove_in_edge(node_id1)
             self.edges.pop((node_id1, node_id2))
+            self.mc += 1
             return True
         return False
 

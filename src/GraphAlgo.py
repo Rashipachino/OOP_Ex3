@@ -18,16 +18,24 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         return self.graph.__copy__()
 
     def get_graph(self) -> GraphInterface:
+        """
+        @return: returns the graph associated with the GraphAlgo
+        """
         return self.graph
 
     def load_from_json(self, file_name: str) -> bool:
+        """
+        loads the graph
+        @param file_name: String representing the file path
+        @return: returns true if graph was loaded successfully, false otherwise
+        """
         try:
             graph = DiGraph()
             with open(file_name, 'r') as file:
                 data = json.load(file)
             for n in data["Nodes"]:
                 if "pos" in n:
-                    pos = n["pos"].split(',')
+                    pos = n["pos"].split(',')  # split by commas
                     graph.add_node(n["id"], (float(pos[0]), float(pos[1]), float(pos[2])))
                 else:
                     graph.add_node(n["id"])
@@ -39,6 +47,11 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             return False
 
     def save_to_json(self, file_name: str) -> bool:
+        """
+        saves the graph
+        @param file_name: String representing the file path
+        @return: returns true if the file was saved successfully, false otherwise
+        """
         try:
             with open(file_name, 'w') as file:
                 json_string = json.dumps(self.graph, cls=GraphEncoder, indent=2)
@@ -48,13 +61,19 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             return False
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
+        """
+        Returns the shortest path from node id1 to node id2 using Dijkstra's Algorithm
+        @param id1: The start node id
+        @param id2: The end node id
+        @return: The distance of the path, a list of the nodes ids that the path goes through
+        """
         global node_weight
-        if id1 not in self.graph.nodes or id2 not in self.graph.nodes:
+        if id1 not in self.graph.nodes or id2 not in self.graph.nodes: # If there is no path between id1 and id2, or one of them dose not exist the function returns (float('inf'),[])
             return float('inf'), []
-        if id1 == id2:
+        if id1 == id2: # if both ids entered are the same, the path is just the node itself and the cost is zero
             return 0.0, [id1]
-        dijakstra = {i: float('inf') for i in self.graph.nodes}
-        dijakstra[id1] = 0
+        dijakstra = {i: float('inf') for i in self.graph.nodes} # turning all "weights" to infinity
+        dijakstra[id1] = 0 # turns start node's "weight" to 0
         pq = []
         heapq.heapify(pq)
         prev = {}
