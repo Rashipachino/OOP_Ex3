@@ -49,9 +49,14 @@ def draw_window(graph: DiGraph, center_node: int, node_pos: dict):
             node_color = YELLOW
         else:
             node_color = RED
-        pygame.draw.circle(window, node_color, (((node_pos[n][0] - minX) / (maxX - minX)) * (WIDTH - 50) + 25, ((node_pos[n][1] - minY) / (maxY - minY)) * (HEIGHT - 150) + 100), RADIUS)
-        id_text = font.render(str(n), True,  GREEN)
-        window.blit(id_text, (((node_pos[n][0] - minX) / (maxX - minX)) * (WIDTH - 50) + 25-5, ((node_pos[n][1] - minY) / (maxY - minY)) * (HEIGHT - 150) + 100-11))
+        if len(graph.nodes) == 1:
+            pygame.draw.circle(window, node_color, (WIDTH // 2, HEIGHT // 2), RADIUS)
+            id_text = font.render(str(n), True,  GREEN)
+            window.blit(id_text, (WIDTH // 2 - 5, HEIGHT // 2 - 11))
+        else:
+            pygame.draw.circle(window, node_color, (((node_pos[n][0] - minX) / (maxX - minX)) * (WIDTH - 50) + 25, ((node_pos[n][1] - minY) / (maxY - minY)) * (HEIGHT - 150) + 100), RADIUS)
+            id_text = font.render(str(n), True,  GREEN)
+            window.blit(id_text, (((node_pos[n][0] - minX) / (maxX - minX)) * (WIDTH - 50) + 25-5, ((node_pos[n][1] - minY) / (maxY - minY)) * (HEIGHT - 150) + 100-11))
     pygame.display.update()
 
 
@@ -167,6 +172,7 @@ def game(ga: GraphAlgo):
                         if button_selected == 1:
                             if ga.load_from_json(user_text):
                                 text_box = 'LOADED'
+                                node_pos = {n.id: (n.pos.x, n.pos.y) if n.pos is not None else (random.uniform(35, 36), random.uniform(32, 33)) for n in ga.graph.nodes.values()}
                                 center_node = -1
                             else:
                                 text_box = 'FAILED TO LOAD'
@@ -191,6 +197,7 @@ def game(ga: GraphAlgo):
                         if button_selected == 4:
                             try:
                                 if ga.graph.remove_node(int(user_text)):
+                                    node_pos.pop(int(user_text))
                                     text_box = 'NODE REMOVED'
                                 else:
                                     text_box = 'INVALID INPUT!'
@@ -240,7 +247,7 @@ def game(ga: GraphAlgo):
                         user_text += event.unicode
             if button_selected == 8:
                 center, eccentricity = ga.centerPoint()
-                if center != -1:
+                if eccentricity != float('inf'):
                     text_box = f'Center Node id: {center}, Eccentricity: {eccentricity}'
                 else:
                     text_box = 'There is no center Node because the graph is not connected'
