@@ -1,5 +1,3 @@
-import random
-
 from src.EdgeData import EdgeData
 from src.Point3D import Point3D
 
@@ -11,7 +9,7 @@ class NodeData:
         if pos is not None:
             self.pos = Point3D(pos)
         else:
-            self.pos = Point3D((random.uniform(35, 36), random.uniform(32, 33), 0.0))
+            self.pos = None
         self.weight = 0
         self.inEdges = {}
         self.outEdges = {}

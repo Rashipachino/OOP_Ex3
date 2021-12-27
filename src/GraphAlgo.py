@@ -187,8 +187,12 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         min_weight = float('inf')
         center_node = -1
         for n in self.graph.nodes:
-            ecc, ecc_w = self.eccentricity(n, min_weight)
-            if ecc != -1 and ecc_w < min_weight:
+            ecc_w = self.eccentricity(n, min_weight)
+            if ecc_w == float('inf'):
+                return -1, float('inf')
+            if ecc_w == -1:
+                continue
+            if ecc_w < min_weight:
                 min_weight = ecc_w
                 center_node = n
         return center_node, min_weight
@@ -206,17 +210,17 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             curr_w, curr_n = heapq.heappop(pq)
             if len(pq) == 0:
                 if curr_w == float('inf'):
-                    return -1, float('inf')
-                return curr_n, curr_w
+                    return float('inf')
+                return curr_w
             if curr_w > minWeight:
-                return -1, float('inf')
+                return -1
             for v, w in self.graph.all_out_edges_of_node(curr_n).items():
                 if dijkstra[v] > dijkstra[curr_n] + w:
                     pq.remove((dijkstra[v], v))
                     dijkstra[v] = dijkstra[curr_n] + w
                     heapq.heappush(pq, (dijkstra[v], v))
                     heapq.heapify(pq)
-        return -1, float('inf')
+        return float('inf')
 
     def plot_graph(self) -> None:
         """
