@@ -18,8 +18,8 @@ def check():
     (7, 6.806805834715163)
     ([1,3,4,2],3.5)
     """
-    # check0()
-    check1()
+    check0()
+    # check1()
     # check2()
     # check3()
 
@@ -29,21 +29,21 @@ def check0():
     This function tests the naming (main methods of the DiGraph class, as defined in GraphInterface.
     :return:
     """
-    g = DiGraph()  # creates an empty directed graph
-    for n in range(5):
-        g.add_node(n)
-    g.add_edge(0, 1, 2)
-    g.add_edge(2, 1, 1)
-    g.add_edge(1, 2, 1)
-    g.add_edge(0, 2, 4)
-    g.add_edge(0, 3, 3)
-    g.add_edge(0, 4, 1)
-    g.add_edge(4, 0, 2)
-    g.add_edge(3, 0, 2)
-    g.add_edge(2, 3, 3)
-    g.add_edge(3, 2, 2)
-    g.add_edge(4, 3, 1)
-    g.add_edge(4, 1, 3)
+    # g = DiGraph()  # creates an empty directed graph
+    # for n in range(5):
+    #     g.add_node(n)
+    # g.add_edge(0, 1, 2)
+    # g.add_edge(2, 1, 1)
+    # g.add_edge(1, 2, 1)
+    # g.add_edge(0, 2, 4)
+    # g.add_edge(0, 3, 3)
+    # g.add_edge(0, 4, 1)
+    # g.add_edge(4, 0, 2)
+    # g.add_edge(3, 0, 2)
+    # g.add_edge(2, 3, 3)
+    # g.add_edge(3, 2, 2)
+    # g.add_edge(4, 3, 1)
+    # g.add_edge(4, 1, 3)
     #g = DiGraph()  # creates an empty directed graph
     # for n in range(4):
     #     g.add_node(n)
@@ -54,16 +54,20 @@ def check0():
     # g.add_edge(1, 3, 1.9)
     # g.remove_edge(1, 3)
     # g.add_edge(1, 3, 10)
-    print(g)  # prints the __repr__ (func output)
+    # print(g)  # prints the __repr__ (func output)
     # print(g.get_all_v())  # prints a dict with all the graph's vertices.
     # print(g.all_in_edges_of_node(1))
     # print(g.all_out_edges_of_node(1))
-    g_algo = GraphAlgo(g)
-    print(g_algo.shortest_path(0, 3))
-    print(g_algo.TSP([2, 3, 1]))
-    print(g_algo.centerPoint())
+    # g_algo = GraphAlgo(g)
+    # print(g_algo.shortest_path(0, 3))
+    # print(g_algo.TSP([2, 3, 1]))
+    # print(g_algo.centerPoint())
 
-    g_algo.plot_graph()
+    # g_algo.plot_graph()
+
+    g = GraphAlgo()
+    g.load_from_json("data/A0.json")
+    g.plot_graph()
 
 
 def check1():

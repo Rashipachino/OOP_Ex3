@@ -1,4 +1,3 @@
-import json
 from abc import ABC
 
 from src.EdgeData import EdgeData
@@ -52,11 +51,11 @@ class DiGraph(GraphInterface, ABC):
         if node_id in self.nodes:
             n = self.nodes.pop(node_id)
             for e in n.outEdges:
-                self.nodes[e.dest].remove_in_edge(e.src)
-                self.edges.pop((e.src, e.dest))
+                self.nodes[e].remove_in_edge(n.id)
+                self.edges.pop((n.id, e))
             for e in n.inEdges:
-                self.nodes[e.src].remove_out_edge(e.dest)
-                self.edges.pop((e.src, e.dest))
+                self.nodes[e].remove_out_edge(n.id)
+                self.edges.pop((e, n.id))
             return True
         return False
 
