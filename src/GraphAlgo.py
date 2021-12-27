@@ -26,8 +26,11 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             with open(file_name, 'r') as file:
                 data = json.load(file)
             for n in data["Nodes"]:
-                pos = n["pos"].split(',')
-                graph.add_node(n["id"], (float(pos[0]), float(pos[1]), float(pos[2])))
+                if "pos" in n:
+                    pos = n["pos"].split(',')
+                    graph.add_node(n["id"], (float(pos[0]), float(pos[1]), float(pos[2])))
+                else:
+                    graph.add_node(n["id"])
             for e in data["Edges"]:
                 graph.add_edge(e["src"], e["dest"], e["w"])
             self.graph = graph
@@ -158,7 +161,6 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         dijkstra = {i: float('inf') for i in self.graph.nodes}
         dijkstra[node] = 0
         pq = []
-        heapq.heapify(pq)
         for n in self.graph.nodes:
             if n != node:
                 heapq.heappush(pq, (float('inf'), n))
@@ -177,6 +179,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     pq.remove((dijkstra[v], v))
                     dijkstra[v] = dijkstra[curr_n] + w
                     heapq.heappush(pq, (dijkstra[v], v))
+                    heapq.heapify(pq)
         return -1, float('inf')
 
     def plot_graph(self) -> None:

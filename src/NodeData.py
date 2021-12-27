@@ -1,3 +1,5 @@
+import random
+
 from src.EdgeData import EdgeData
 from src.Point3D import Point3D
 
@@ -9,12 +11,10 @@ class NodeData:
         if pos is not None:
             self.pos = Point3D(pos)
         else:
-            self.pos = None
+            self.pos = Point3D((random.uniform(35, 36), random.uniform(32, 33), 0.0))
         self.weight = 0
-        self.tag = 0
         self.inEdges = {}
         self.outEdges = {}
-        self.prev = None
 
     def __copy__(self):
         return NodeData(self.id, (self.pos.x, self.pos.y, self.pos.z))
@@ -29,12 +29,6 @@ class NodeData:
 
     def set_weight(self, weight: float) -> None:
         self.weight = weight
-
-    def set_tag(self, tag: int) -> None:
-        self.tag = tag
-
-    def set_prev(self, prev: int) -> None:
-        self.prev = prev
 
     def add_in_edge(self, e: EdgeData) -> None:
         self.inEdges[e.src] = e.weight
