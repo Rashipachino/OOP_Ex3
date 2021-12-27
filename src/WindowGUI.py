@@ -169,45 +169,63 @@ def game(ga: GraphAlgo):
                             else:
                                 text_box = 'FAILED TO SAVE'
                         if button_selected == 3:
-                            info = user_text.split(',')
-                            if ga.graph.add_node(int(info[0]), (int(info[1]), int(info[2]), 0.0)):
-                                text_box = 'NODE ADDED'
-                            else:
+                            try:
+                                info = user_text.split(',')
+                                if ga.graph.add_node(int(info[0]), (float(info[1]), float(info[2]), float(info[3]))):
+                                    text_box = 'NODE ADDED'
+                                else:
+                                    text_box = 'INVALID INPUT!'
+                            except:
                                 text_box = 'INVALID INPUT!'
                         if button_selected == 4:
-                            if ga.graph.remove_node(int(user_text)):
-                                text_box = 'NODE REMOVED'
-                            else:
+                            try:
+                                if ga.graph.remove_node(int(user_text)):
+                                    text_box = 'NODE REMOVED'
+                                else:
+                                    text_box = 'INVALID INPUT!'
+                            except:
                                 text_box = 'INVALID INPUT!'
                         if button_selected == 5:
-                            info = user_text.split(',')
-                            if ga.graph.add_edge(int(info[0]), int(info[1]), float(info[2])):
-                                text_box = "EDGE ADDED"
-                            else:
+                            try:
+                                info = user_text.split(',')
+                                if ga.graph.add_edge(int(info[0]), int(info[1]), float(info[2])):
+                                    text_box = "EDGE ADDED"
+                                else:
+                                    text_box = 'INVALID INPUT!'
+                            except:
                                 text_box = 'INVALID INPUT!'
                         if button_selected == 6:
-                            info = user_text.split(',')
-                            if ga.graph.remove_edge(int(info[0]), int(info[1])):
-                                text_box = "EDGE REMOVED"
-                            else:
+                            try:
+                                info = user_text.split(',')
+                                if ga.graph.remove_edge(int(info[0]), int(info[1])):
+                                    text_box = "EDGE REMOVED"
+                                else:
+                                    text_box = 'INVALID INPUT!'
+                            except:
                                 text_box = 'INVALID INPUT!'
                         if button_selected == 7:
-                            info = user_text.split(',')
-                            w, path = ga.shortest_path(int(info[0]), int(info[1]))
-                            if w != float('inf'):
-                                text_box = f'Weight: {w}, Shortest Path: {path}'
-                            else:
-                                text_box = f'There is no path between {int(info[0])} and {int(info[1])}'
+                            try:
+                                info = user_text.split(',')
+                                w, path = ga.shortest_path(int(info[0]), int(info[1]))
+                                if w != float('inf'):
+                                    text_box = f'Weight: {w}, Shortest Path: {path}'
+                                else:
+                                    text_box = f'There is no path between {int(info[0])} and {int(info[1])}'
+                            except:
+                                text_box = 'INVALID INPUT!'
                         if button_selected == 8:
                             center, eccentricity = ga.centerPoint()
                             text_box = f'Center Node id: {center}, Eccentricity: {eccentricity}'
                         if button_selected == 9:
-                            info = user_text.split(',')
-                            cities = []
-                            for id in info:
-                                cities.append(int(id))
-                            path, w = ga.TSP(cities)
-                            text_box = f'Weight: {w}, Shortest Path: {path}'
+                            try:
+                                info = user_text.split(',')
+                                cities = []
+                                for id in info:
+                                    cities.append(int(id))
+                                path, w = ga.TSP(cities)
+                                text_box = f'Weight: {w}, Shortest Path: {path}'
+                            except:
+                                text_box = 'INVALID INPUT!'
                         user_text = ''
                         active = False
                     else:
