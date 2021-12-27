@@ -2,8 +2,9 @@ import json
 from abc import ABC
 from queue import PriorityQueue
 from typing import List
+import pygame
 
-from src import GraphInterface
+from src import GraphInterface, WindowGUI
 from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
 from src.GraphEncoder import GraphEncoder
@@ -143,7 +144,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         pass
 
     def plot_graph(self) -> None:
-        pass
+        WindowGUI.game(self.graph)
 
     def transpose(self) -> GraphInterface:
         gt = self.graph.__copy__()
