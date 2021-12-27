@@ -144,7 +144,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         pass
 
     def plot_graph(self) -> None:
-        WindowGUI.game(self.graph)
+        WindowGUI.game(self)
 
     def transpose(self) -> GraphInterface:
         gt = self.graph.__copy__()
