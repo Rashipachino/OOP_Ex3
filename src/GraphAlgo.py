@@ -72,8 +72,8 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             return float('inf'), []
         if id1 == id2:  # if both ids entered are the same, the path is just the node itself and the cost is zero
             return 0.0, [id1]
-        dijakstra = {i: float('inf') for i in self.graph.nodes}  # turning all "weights" to infinity
-        dijakstra[id1] = 0  # turns start node's "weight" to 0
+        dijkstra = {i: float('inf') for i in self.graph.nodes}  # turning all "weights" to infinity
+        dijkstra[id1] = 0  # turns start node's "weight" to 0
         pq = []
         prev = {}
         for n in self.graph.nodes:  # assign all nodes prev = None
@@ -84,16 +84,16 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                 heapq.heappush(pq, (0, n))
         while len(pq) != 0:
             node_weight, i = heapq.heappop(pq)
-            if dijakstra[i] == float('inf'):  # if popping a node who's weight is infinity, no path exists
+            if dijkstra[i] == float('inf'):  # if popping a node who's weight is infinity, no path exists
                 return float('inf'), []
             if i == id2:  # found path
                 break
             for dest, w in self.graph.all_out_edges_of_node(i).items():  # all neighbors of i
-                if dijakstra[dest] > dijakstra[i] + w:
-                    pq.remove((dijakstra[dest], dest))  # removes id from pq
-                    dijakstra[dest] = dijakstra[i] + w  # relaxes
+                if dijkstra[dest] > dijkstra[i] + w:
+                    pq.remove((dijkstra[dest], dest))  # removes id from pq
+                    dijkstra[dest] = dijkstra[i] + w  # relaxes
                     prev[dest] = i  # updates prev
-                    heapq.heappush(pq, (dijakstra[dest], dest)) # push id back into pq with new weight
+                    heapq.heappush(pq, (dijkstra[dest], dest)) # push id back into pq with new weight
         temp = id2
         short_path = [temp]
         while prev[temp] is not None:  # create list path
@@ -181,43 +181,48 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         """
         Finds the node that has the shortest distance to it's farthest node. This function uses a helper function
         eccentricity.
-        @return: The nodes id, min-maximum distance
+        return: The nodes id, min-maximum distance
         """
-        global n
         min_weight = float('inf')
         center_node = -1
-        for n in self.graph.nodes:
-            ecc_w = self.eccentricity(n, min_weight)
-            if ecc_w == float('inf'):
+        for n in self.graph.nodes:  # go through all nodes in the graph
+            ecc_w = self.eccentricity(n, min_weight)  # find out what the eccentricity of the node is
+            if ecc_w == float('inf'):  # if the ecc is inf then the graph is not connected and therefore there is no center
                 return -1, float('inf')
-            if ecc_w == -1:
+            if ecc_w == -1:  # if the ecc is -1 then the ecc is higher than the current min_weight and stopped early
                 continue
-            if ecc_w < min_weight:
+            if ecc_w < min_weight:  # if we found a shorter ecc
                 min_weight = ecc_w
                 center_node = n
         return center_node, min_weight
 
-    def eccentricity(self, node: int, minWeight: float):
-        dijkstra = {i: float('inf') for i in self.graph.nodes}
-        dijkstra[node] = 0
-        pq = []
-        for n in self.graph.nodes:
+    def eccentricity(self, node: int, minWeight: float) -> float:
+        """
+        This is a helper function for centerPoint to find out what the eccentricity from the given node
+        :param node: id of node
+        :param minWeight: the minWeight that has been found so far
+        :return: the eccentricity of the graph from the given node
+        """
+        dijkstra = {i: float('inf') for i in self.graph.nodes}  # to hold all of the weights between each node to the given node
+        dijkstra[node] = 0  # weight is 0 to itself
+        pq = []  # priority queue
+        for n in self.graph.nodes:  # to fill up the priority queue
             if n != node:
                 heapq.heappush(pq, (float('inf'), n))
             else:
                 heapq.heappush(pq, (0, n))
-        while len(pq) != 0:
-            curr_w, curr_n = heapq.heappop(pq)
-            if len(pq) == 0:
-                if curr_w == float('inf'):
+        while len(pq) != 0:  # go until the priority queue is not empty
+            curr_w, curr_n = heapq.heappop(pq)  # take out the smallest distance from the priority queue
+            if len(pq) == 0:  # if the pq is now empty
+                if curr_w == float('inf'):  # if the weigh tof the last node is inf then the graph is not connected
                     return float('inf')
-                return curr_w
-            if curr_w > minWeight:
+                return curr_w  # this node has the highest weight from the given node and there is the eccentricity
+            if curr_w > minWeight:  # if the weight of the node is higher than the given minWeight then this is definitely not the smallest ecc so return -1 flag
                 return -1
-            for v, w in self.graph.all_out_edges_of_node(curr_n).items():
-                if dijkstra[v] > dijkstra[curr_n] + w:
+            for v, w in self.graph.all_out_edges_of_node(curr_n).items():  # go through all of the out edges of the curr_n
+                if dijkstra[v] > dijkstra[curr_n] + w:  # if the path through curr_n has a smaller weight then its current weight then relax
                     pq.remove((dijkstra[v], v))
-                    dijkstra[v] = dijkstra[curr_n] + w
+                    dijkstra[v] = dijkstra[curr_n] + w  # relaxing
                     heapq.heappush(pq, (dijkstra[v], v))
                     heapq.heapify(pq)
         return float('inf')
