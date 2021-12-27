@@ -1,4 +1,5 @@
 import json
+import heapq
 from abc import ABC
 from queue import PriorityQueue
 from typing import List
@@ -52,25 +53,32 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             return 0.0, [id1]
         dijakstra = {i: float('inf') for i in self.graph.nodes}
         dijakstra[id1] = 0
-        pq = PriorityQueue()
+        pq = []
+        heapq.heapify(pq)
+        #pq = PriorityQueue()
         prev = {}
         for n in self.graph.nodes:
             prev[n] = None
             if n != id1:
-                pq.put((float('inf'), n))
+                heapq.heappush(pq, (float('inf'), n))
+                #pq.put((float('inf'), n))
             else:
-                pq.put((0, n))
-        while not pq.empty():
-            node_weight, i = pq.get()
+                heapq.heappush(pq, (0, n))
+                #pq.put((0, n))
+        while len(pq) != 0:
+            node_weight, i = heapq.heappop(pq)
+            #node_weight, i = pq.get()
             if dijakstra[i] == float('inf'):
                 return float('inf'), []
             if i == id2:
                 break
             for dest, w in self.graph.all_out_edges_of_node(i).items():
                 if dijakstra[dest] > dijakstra[i] + w:
+                    pq.remove((dijakstra[dest], dest))
                     dijakstra[dest] = dijakstra[i] + w
                     prev[dest] = i
-                    pq.put((dijakstra[dest], dest))
+                    heapq.heappush(pq, (dijakstra[dest], dest))
+                    #pq.put((dijakstra[dest], dest))
         temp = id2
         short_path = [temp]
         while prev[temp] is not None:
@@ -112,24 +120,33 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         path_w = 0.0
         dijkstra = {i: float('inf') for i in self.graph.nodes}
         dijkstra[curr_node] = 0
-        pq = PriorityQueue()
+        pq = []
+        heapq.heapify(pq)
+        #pq = PriorityQueue()
         prev = {}
         for n in self.graph.nodes:
             prev[n] = None
             if n != curr_node:
-                pq.put((float('inf'), n))
+                heapq.heappush(pq, (float('inf'), n))
+                #pq.put((float('inf'), n))
             else:
-                pq.put((0, n))
-        while not pq.empty():
-            node_w, curr = pq.get()
+                heapq.heappush(pq, (0, n))
+                #pq.put((0, n))
+        while len(pq) != 0:
+            node_w, curr = heapq.heappop(pq)
+            #node_w, curr = pq.get()
             if curr in n_list:
                 break
             for neighbor, w in self.graph.all_out_edges_of_node(curr).items():
                 if dijkstra[neighbor] > dijkstra[curr] + w:
+                    pq.remove((dijkstra[neighbor], neighbor))
                     dijkstra[neighbor] = dijkstra[curr] + w
                     prev[neighbor] = curr
-                    pq.put((dijkstra[neighbor], neighbor))
-        if pq.empty():
+                    heapq.heappush(pq, (dijkstra[neighbor], neighbor))
+                    # dijkstra[neighbor] = dijkstra[curr] + w
+                    # prev[neighbor] = curr
+                    # pq.put((dijkstra[neighbor], neighbor))
+        if len(pq) == 0:
             return -1
         temp_node = curr
         path_w += node_w
@@ -140,7 +157,48 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         return dij_path, node_w
 
     def centerPoint(self) -> (int, float):
-        pass
+        global n
+        min_weight = float('inf')
+        center_node = -1
+        for n in self.graph.nodes:
+            ecc, ecc_w = self.eccentricity(n, min_weight)
+            if ecc != -1 and ecc_w < min_weight:
+                min_weight = ecc_w
+                center_node = n
+        return center_node, min_weight
+
+    def eccentricity(self, node: int, minWeight: float):
+        dijkstra = {i: float('inf') for i in self.graph.nodes}
+        dijkstra[node] = 0
+        pq = []
+        heapq.heapify(pq)
+        #pq = PriorityQueue()
+        for n in self.graph.nodes:
+            if n != node:
+                heapq.heappush(pq, (float('inf'), n))
+                #pq.put((float('inf'), n))
+            else:
+                heapq.heappush(pq, (0, n))
+                #pq.put((0, n))
+        while len(pq) != 0:
+            curr_w, curr_n = heapq.heappop(pq)
+            #curr_w, curr_n = pq.get()
+            if len(pq) == 0:
+                if curr_w == float('inf'):
+                    print("issue is here")
+                    return -1, float('inf')
+                return curr_n, curr_w
+            if curr_w > minWeight:
+                return -1, float('inf')
+            for v, w in self.graph.all_out_edges_of_node(curr_n).items():
+                if dijkstra[v] > dijkstra[curr_n] + w:
+                    pq.remove((dijkstra[v], v))
+                    dijkstra[v] = dijkstra[curr_n] + w
+                    heapq.heappush(pq, (dijkstra[v], v))
+                    #heapq.heapify(pq)
+                    #pq.put((dijkstra[v], v))
+        return -1, float('inf')
+
 
     def plot_graph(self) -> None:
         pass
