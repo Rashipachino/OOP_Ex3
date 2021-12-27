@@ -1,4 +1,3 @@
-import json
 from abc import ABC
 
 from src.EdgeData import EdgeData

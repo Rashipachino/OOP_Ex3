@@ -15,6 +15,7 @@ MAGENTA = (255, 0, 255)
 GRAY = (169, 169, 169)
 DARK_GRAY = (43, 45, 47)
 BLACK = (0, 0, 0)
+YELLOW = (255, 255, 0)
 
 FPS = 60
 
@@ -23,7 +24,7 @@ pygame.display.set_caption("Ex3 GUI")
 font = pygame.font.SysFont('comicsans', 15)
 
 
-def draw_window(graph: DiGraph):
+def draw_window(graph: DiGraph, center_node: int):
     minX, maxX, minY, maxY = float('inf'), float('-inf'), float('inf'), float('-inf')
     for n in graph.nodes.values():
         if n.pos.x < minX:
@@ -44,7 +45,11 @@ def draw_window(graph: DiGraph):
         window.blit(weight_text, (((newX - minX) / (maxX - minX)) * (WIDTH-50) + 25, ((newY - minY) / (maxY - minY)) * (HEIGHT-150) + 100))
 
     for n in graph.nodes.values():
-        pygame.draw.circle(window, RED, (((n.pos.x - minX) / (maxX - minX)) * (WIDTH - 50) + 25, ((n.pos.y - minY) / (maxY - minY)) * (HEIGHT - 150) + 100), RADIUS)
+        if n.id == center_node:
+            node_color = YELLOW
+        else:
+            node_color = RED
+        pygame.draw.circle(window, node_color, (((n.pos.x - minX) / (maxX - minX)) * (WIDTH - 50) + 25, ((n.pos.y - minY) / (maxY - minY)) * (HEIGHT - 150) + 100), RADIUS)
         id_text = font.render(str(n.id), True,  GREEN)
         window.blit(id_text, (((n.pos.x - minX) / (maxX - minX)) * (WIDTH - 50) + 25-5, ((n.pos.y - minY) / (maxY - minY)) * (HEIGHT - 150) + 100-11))
     pygame.display.update()
@@ -55,6 +60,7 @@ def game(ga: GraphAlgo):
     user_text = ''
     text_box = 'WELCOME!'
     button_selected = 0
+    center_node = -1
     clock = pygame.time.Clock()
     run = True
     while run:
@@ -143,7 +149,6 @@ def game(ga: GraphAlgo):
                     active = True
                 elif button8.collidepoint(event.pos):
                     button_selected = 8
-                    active = True
                 elif button9.collidepoint(event.pos):
                     button_selected = 9
                     text_box = "Enter Node ids to be included in the cities list with a separation of ',':"
@@ -213,9 +218,6 @@ def game(ga: GraphAlgo):
                                     text_box = f'There is no path between {int(info[0])} and {int(info[1])}'
                             except:
                                 text_box = 'INVALID INPUT!'
-                        if button_selected == 8:
-                            center, eccentricity = ga.centerPoint()
-                            text_box = f'Center Node id: {center}, Eccentricity: {eccentricity}'
                         if button_selected == 9:
                             try:
                                 info = user_text.split(',')
@@ -230,6 +232,15 @@ def game(ga: GraphAlgo):
                         active = False
                     else:
                         user_text += event.unicode
-        draw_window(ga.graph)
+            if button_selected == 8:
+                center, eccentricity = ga.centerPoint()
+                if center != -1:
+                    text_box = f'Center Node id: {center}, Eccentricity: {eccentricity}'
+                else:
+                    text_box = 'There is no center Node because the graph is not connected'
+                center_node = center
+                user_text = ''
+                active = False
+        draw_window(ga.graph, center_node)
         clock.tick(FPS)
 

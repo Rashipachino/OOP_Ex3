@@ -1,9 +1,7 @@
 import json
 import heapq
 from abc import ABC
-from queue import PriorityQueue
 from typing import List
-import pygame
 
 from src import GraphInterface, WindowGUI
 from src.DiGraph import DiGraph
@@ -56,19 +54,15 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         dijakstra[id1] = 0
         pq = []
         heapq.heapify(pq)
-        #pq = PriorityQueue()
         prev = {}
         for n in self.graph.nodes:
             prev[n] = None
             if n != id1:
                 heapq.heappush(pq, (float('inf'), n))
-                #pq.put((float('inf'), n))
             else:
                 heapq.heappush(pq, (0, n))
-                #pq.put((0, n))
         while len(pq) != 0:
             node_weight, i = heapq.heappop(pq)
-            #node_weight, i = pq.get()
             if dijakstra[i] == float('inf'):
                 return float('inf'), []
             if i == id2:
@@ -79,7 +73,6 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     dijakstra[dest] = dijakstra[i] + w
                     prev[dest] = i
                     heapq.heappush(pq, (dijakstra[dest], dest))
-                    #pq.put((dijakstra[dest], dest))
         temp = id2
         short_path = [temp]
         while prev[temp] is not None:
@@ -123,19 +116,15 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         dijkstra[curr_node] = 0
         pq = []
         heapq.heapify(pq)
-        #pq = PriorityQueue()
         prev = {}
         for n in self.graph.nodes:
             prev[n] = None
             if n != curr_node:
                 heapq.heappush(pq, (float('inf'), n))
-                #pq.put((float('inf'), n))
             else:
                 heapq.heappush(pq, (0, n))
-                #pq.put((0, n))
         while len(pq) != 0:
             node_w, curr = heapq.heappop(pq)
-            #node_w, curr = pq.get()
             if curr in n_list:
                 break
             for neighbor, w in self.graph.all_out_edges_of_node(curr).items():
@@ -144,9 +133,6 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     dijkstra[neighbor] = dijkstra[curr] + w
                     prev[neighbor] = curr
                     heapq.heappush(pq, (dijkstra[neighbor], neighbor))
-                    # dijkstra[neighbor] = dijkstra[curr] + w
-                    # prev[neighbor] = curr
-                    # pq.put((dijkstra[neighbor], neighbor))
         if len(pq) == 0:
             return -1
         temp_node = curr
@@ -173,20 +159,15 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         dijkstra[node] = 0
         pq = []
         heapq.heapify(pq)
-        #pq = PriorityQueue()
         for n in self.graph.nodes:
             if n != node:
                 heapq.heappush(pq, (float('inf'), n))
-                #pq.put((float('inf'), n))
             else:
                 heapq.heappush(pq, (0, n))
-                #pq.put((0, n))
         while len(pq) != 0:
             curr_w, curr_n = heapq.heappop(pq)
-            #curr_w, curr_n = pq.get()
             if len(pq) == 0:
                 if curr_w == float('inf'):
-                    print("issue is here")
                     return -1, float('inf')
                 return curr_n, curr_w
             if curr_w > minWeight:
@@ -196,17 +177,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     pq.remove((dijkstra[v], v))
                     dijkstra[v] = dijkstra[curr_n] + w
                     heapq.heappush(pq, (dijkstra[v], v))
-                    #heapq.heapify(pq)
-                    #pq.put((dijkstra[v], v))
         return -1, float('inf')
-
 
     def plot_graph(self) -> None:
         WindowGUI.game(self)
-
-    def transpose(self) -> GraphInterface:
-        gt = self.graph.__copy__()
-        gt.edges = {}
-        for e in self.graph.edges:
-            gt.add_edge(e.dest, e.src, e.weight)
-        return gt
