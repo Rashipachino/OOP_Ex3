@@ -8,7 +8,7 @@ Our program can load and save a graph, find the shorest path between two nodes, 
 In addition a graph can be presented in a simple user-friendly GUI that allows you to run any of the capabilities mentioned above, and also make changes to the graph like adding or removing nodes and edges.
 To run the GUI with a graph, download this repository and run the following command line code from your shell at the folder of the downloaded repository:
 
-$ python3 RunGUI.py data/_JSON_GRAPH_FILE_PATH_
+$ python3 RunGUI.py _JSON_GRAPH_FILE_PATH_
 
 
 More information about each class and function can be found in this assignment's wiki. 
