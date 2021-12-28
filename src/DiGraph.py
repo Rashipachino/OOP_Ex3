@@ -21,7 +21,7 @@ class DiGraph(GraphInterface, ABC):
         return temp
 
     def __repr__(self) -> str:
-        return f'Graph(Nodes: {self.nodes}, Edges: {self.edges})'
+        return f'Graph: |V|={self.v_size()}, |E|={self.e_size()}'
 
     def v_size(self) -> int:
         """

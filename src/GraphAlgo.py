@@ -93,7 +93,8 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     pq.remove((dijkstra[dest], dest))  # removes id from pq
                     dijkstra[dest] = dijkstra[i] + w  # relaxes
                     prev[dest] = i  # updates prev
-                    heapq.heappush(pq, (dijkstra[dest], dest)) # push id back into pq with new weight
+                    heapq.heappush(pq, (dijkstra[dest], dest))  # push id back into pq with new weight
+                    heapq.heapify(pq)
         temp = id2
         short_path = [temp]
         while prev[temp] is not None:  # create list path

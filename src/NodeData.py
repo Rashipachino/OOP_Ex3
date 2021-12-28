@@ -18,9 +18,7 @@ class NodeData:
         return NodeData(self.id, (self.pos.x, self.pos.y, self.pos.z))
 
     def __repr__(self):
-        if self.pos is not None:
-            return f'Node(id: {self.id}, pos: {self.pos.x},{self.pos.y},{self.pos.z})'
-        return f'Node(id: {self.id})'
+        return f'{self.id}: |edges_out| {len(self.outEdges)} |edges in| {len(self.inEdges)}'
 
     def set_pos(self, pos: tuple) -> None:
         self.pos = Point3D(pos)
