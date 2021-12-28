@@ -118,6 +118,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             cities = node_lst.copy()
             cost = 0.0
             curr = city
+            flag = 0
             while True:
                 cities.remove(curr)  # remove curr from cities before sending to helper function in order to actually
                 # find closest node not including the node itself
@@ -125,11 +126,14 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     break
                 closest_node_path = self._closestNodeFinder(cities, curr)  # returns the shorest path to the closest
                 # node and the price is cost to get there
-                if closest_node_path == -1:
-                    return [], -1
+                if closest_node_path[1] == -1:
+                    flag = 1
+                    break
                 path += closest_node_path[0][1:]  # add path except for first value because already added to path
                 cost += closest_node_path[1]  # update cost
                 curr = closest_node_path[0][-1] # curr now equals what was the next closest node
+            if flag == 1:
+                continue
             closest_last = self.shortest_path(curr, cities[0])  # finds shortest path from last closest node to last
             # value in cities
             path += closest_last[1][1:]  # adds to path
@@ -160,6 +164,8 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                 heapq.heappush(pq, (0, n))  # push into heapified list pq
         while len(pq) != 0:
             node_w, curr = heapq.heappop(pq)  # pops lowest weighted value in pq
+            if dijkstra[curr] == float('inf'):  # if popping a node who's weight is infinity, no path exists
+                return [], -1
             if curr in n_list:  #found value in list
                 break
             for neighbor, w in self.graph.all_out_edges_of_node(curr).items():  # check neighbors
@@ -169,7 +175,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     prev[neighbor] = curr  # updates prev
                     heapq.heappush(pq, (dijkstra[neighbor], neighbor))  # push id back into pq with new weight
         if len(pq) == 0:  # got to end of list and did not find a closest node
-            return -1
+            return [], -1
         temp_node = curr
         path_w += node_w
         dij_path = [temp_node]
@@ -185,11 +191,11 @@ class GraphAlgo(GraphAlgoInterface, ABC):
         return: The nodes id, min-maximum distance
         """
         min_weight = float('inf')
-        center_node = -1
+        center_node = None
         for n in self.graph.nodes:  # go through all nodes in the graph
             ecc_w = self.eccentricity(n, min_weight)  # find out what the eccentricity of the node is
             if ecc_w == float('inf'):  # if the ecc is inf then the graph is not connected and therefore there is no center
-                return -1, float('inf')
+                return None, float('inf')
             if ecc_w == -1:  # if the ecc is -1 then the ecc is higher than the current min_weight and stopped early
                 continue
             if ecc_w < min_weight:  # if we found a shorter ecc
@@ -214,9 +220,9 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                 heapq.heappush(pq, (0, n))
         while len(pq) != 0:  # go until the priority queue is not empty
             curr_w, curr_n = heapq.heappop(pq)  # take out the smallest distance from the priority queue
+            if curr_w == float('inf'):  # if the weight of the node is inf then the graph is not connected
+                return float('inf')
             if len(pq) == 0:  # if the pq is now empty
-                if curr_w == float('inf'):  # if the weigh tof the last node is inf then the graph is not connected
-                    return float('inf')
                 return curr_w  # this node has the highest weight from the given node and there is the eccentricity
             if curr_w > minWeight:  # if the weight of the node is higher than the given minWeight then this is definitely not the smallest ecc so return -1 flag
                 return -1
