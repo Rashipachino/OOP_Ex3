@@ -83,6 +83,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             else:
                 heapq.heappush(pq, (0, n))
         while len(pq) != 0:
+            heapq.heapify(pq)
             node_weight, i = heapq.heappop(pq)
             if dijkstra[i] == float('inf'):  # if popping a node who's weight is infinity, no path exists
                 return float('inf'), []
@@ -94,7 +95,6 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     dijkstra[dest] = dijkstra[i] + w  # relaxes
                     prev[dest] = i  # updates prev
                     heapq.heappush(pq, (dijkstra[dest], dest))  # push id back into pq with new weight
-                    heapq.heapify(pq)
         temp = id2
         short_path = [temp]
         while prev[temp] is not None:  # create list path
@@ -163,10 +163,11 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             else:
                 heapq.heappush(pq, (0, n))  # push into heapified list pq
         while len(pq) != 0:
+            heapq.heapify(pq)
             node_w, curr = heapq.heappop(pq)  # pops lowest weighted value in pq
             if dijkstra[curr] == float('inf'):  # if popping a node who's weight is infinity, no path exists
                 return [], -1
-            if curr in n_list:  #found value in list
+            if curr in n_list:  # found value in list
                 break
             for neighbor, w in self.graph.all_out_edges_of_node(curr).items():  # check neighbors
                 if dijkstra[neighbor] > dijkstra[curr] + w:
@@ -196,9 +197,7 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             ecc_w = self.eccentricity(n, min_weight)  # find out what the eccentricity of the node is
             if ecc_w == float('inf'):  # if the ecc is inf then the graph is not connected and therefore there is no center
                 return None, float('inf')
-            if ecc_w == -1:  # if the ecc is -1 then the ecc is higher than the current min_weight and stopped early
-                continue
-            if ecc_w < min_weight:  # if we found a shorter ecc
+            if ecc_w != -1 and ecc_w < min_weight:  # if we found a shorter ecc, if the ecc is -1 then the ecc is higher than the current min_weight and stopped early
                 min_weight = ecc_w
                 center_node = n
         return center_node, min_weight
@@ -219,11 +218,12 @@ class GraphAlgo(GraphAlgoInterface, ABC):
             else:
                 heapq.heappush(pq, (0, n))
         while len(pq) != 0:  # go until the priority queue is not empty
+            heapq.heapify(pq)
             curr_w, curr_n = heapq.heappop(pq)  # take out the smallest distance from the priority queue
-            if curr_w == float('inf'):  # if the weight of the node is inf then the graph is not connected
-                return float('inf')
             if len(pq) == 0:  # if the pq is now empty
                 return curr_w  # this node has the highest weight from the given node and there is the eccentricity
+            if curr_w == float('inf'):  # if the weight of the node is inf then the graph is not connected
+                return float('inf')
             if curr_w > minWeight:  # if the weight of the node is higher than the given minWeight then this is definitely not the smallest ecc so return -1 flag
                 return -1
             for v, w in self.graph.all_out_edges_of_node(curr_n).items():  # go through all of the out edges of the curr_n
@@ -231,7 +231,6 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                     pq.remove((dijkstra[v], v))
                     dijkstra[v] = dijkstra[curr_n] + w  # relaxing
                     heapq.heappush(pq, (dijkstra[v], v))
-                    heapq.heapify(pq)
         return float('inf')
 
     def plot_graph(self) -> None:
