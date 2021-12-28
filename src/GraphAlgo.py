@@ -128,7 +128,6 @@ class GraphAlgo(GraphAlgoInterface, ABC):
                 if closest_node_path[1] == -1:
                     flag = 1
                     break
-                    # return [], -1
                 path += closest_node_path[0][1:]  # add path except for first value because already added to path
                 cost += closest_node_path[1]  # update cost
                 curr = closest_node_path[0][-1] # curr now equals what was the next closest node
